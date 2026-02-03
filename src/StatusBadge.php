@@ -338,7 +338,7 @@ class StatusBadge {
 		wp_register_composer_style(
 			'wp-status-badge',
 			__FILE__,
-			'assets/css/status-badge.css',
+			'css/status-badge.css',
 			[ 'dashicons' ]
 		);
 	}
