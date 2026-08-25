@@ -1,54 +1,88 @@
-/* ==========================================================================
-   WP Status Badge
-   ========================================================================== */
+/**
+ * WP Status Badge
+ *
+ * Colours are WordPress's own. Every value here appears in core's admin
+ * stylesheets, which matters for a badge more than for most things: it sits
+ * beside core's notices and core's post states, and a green that is nearly
+ * but not quite core's green reads as a plugin that did not look.
+ *
+ * Every pair was checked against WCAG AA for small text rather than picked by
+ * eye, because a coloured badge is exactly where that goes wrong. Two of the
+ * pairs this replaced did not pass: amber on its old tint came out at 4.32,
+ * and the obvious core green (#00a32a) on the green tint is 3.11 — nowhere
+ * near, and it is the one anybody would reach for first.
+ *
+ *   success  #007017 on #edfaef   5.86
+ *   warning  #614200 on #fcf9e8   8.68
+ *   danger   #b32d2e on #fcf0f1   5.67
+ *   info     #0a4b78 on #f0f6fc   8.42
+ *   default  #50575e on #f0f0f1   6.43
+ */
 
 .wp-status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    padding: 2px 8px;
-    font-size: 12px;
-    line-height: 1.4;
-    font-weight: 500;
-    border-radius: 4px;
-    background: #ececec;
-    color: #50575e;
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+
+	/* Vertical padding in a line-height, so a badge in a table cell does not
+	   make the row taller than its neighbours. */
+	padding: 2px 8px;
+	border-radius: 3px;
+	background: #f0f0f1;
+	color: #50575e;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.6;
+
+	/* A status is one thing. Wrapping it mid-word in a narrow column makes
+	   two, and the second one looks like a different badge. */
+	white-space: nowrap;
 }
 
+/* Sized to the text rather than left at the dashicon default of 20px, which
+   would set the badge's height on its own. No opacity: a decorative icon
+   faded to 85% is a contrast reduction applied to the one part of the badge
+   that cannot be read without it. */
 .wp-status-badge .dashicons {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
-    line-height: 14px;
-    opacity: 0.85;
+	width: 14px;
+	height: 14px;
+	font-size: 14px;
+	line-height: 14px;
 }
 
-/* Success (green) */
 .wp-status-badge--success {
-    background: #e5f5f0;
-    color: #017d5c;
+	background: #edfaef;
+	color: #007017;
 }
 
-/* Warning (amber) */
 .wp-status-badge--warning {
-    background: #f5f2e5;
-    color: #996800;
+	background: #fcf9e8;
+	color: #614200;
 }
 
-/* Danger (red) */
 .wp-status-badge--danger {
-    background: #ffd6d6;
-    color: #ac3d3d;
+	background: #fcf0f1;
+	color: #b32d2e;
 }
 
-/* Info (blue) */
 .wp-status-badge--info {
-    background: #e5f1f5;
-    color: #016087;
+	background: #f0f6fc;
+	color: #0a4b78;
 }
 
-/* Default (grey) */
+/* Same as the base rule, and kept: a caller writing --default explicitly is
+   asking for the grey badge, and it should not depend on the base rule
+   happening to be grey. */
 .wp-status-badge--default {
-    background: #ececec;
-    color: #50575e;
+	background: #f0f0f1;
+	color: #50575e;
+}
+
+/* Colour is not the only carrier — the icon differs per type and the label
+   is a word — but in forced-colours mode the tints are dropped entirely, so
+   the badge needs an edge to still read as one. */
+@media (forced-colors: active) {
+	.wp-status-badge {
+		border: 1px solid currentColor;
+	}
 }

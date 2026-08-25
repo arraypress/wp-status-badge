@@ -186,12 +186,20 @@ class StatusBadge {
 	public function render( string $status, ?string $type = null, ?string $label = null ): string {
 		$this->enqueue();
 
-		$type  = $type ?? $this->get_type( $status );
+		// A type the caller named has to be one that exists. It goes into a
+		// class attribute and into an icon lookup, and an unrecognised one
+		// gives a badge with no colour and a fallback glyph — which reads as
+		// a status this library does not know rather than as a typo in the
+		// call, so the mistake gets blamed on the data.
+		$type = null !== $type && in_array( $type, self::get_types(), true )
+			? $type
+			: $this->get_type( $status );
 		$label = $label ?? self::format_label( $status );
 		$icon  = self::ICONS[ $type ] ?? self::ICONS[ self::DEFAULT ];
 
 		return sprintf(
-			'<span class="wp-status-badge wp-status-badge--%s"><span class="dashicons %s"></span>%s</span>',
+			'<span class="wp-status-badge wp-status-badge--%s">' .
+			'<span class="dashicons %s" aria-hidden="true"></span>%s</span>',
 			esc_attr( $type ),
 			esc_attr( $icon ),
 			esc_html( $label )
@@ -207,7 +215,30 @@ class StatusBadge {
 	 * @return void
 	 */
 	public function enqueue(): void {
-		wp_enqueue_style( 'wp-status-badge' );
+		wp_enqueue_style( self::handle() );
+	}
+
+	/**
+	 * The stylesheet handle for this copy of the library.
+	 *
+	 * Derived from the namespace rather than written as a literal, because
+	 * Strauss renames namespaces and does not rename strings. Two plugins
+	 * each bundling a prefixed copy would otherwise both register a style
+	 * called 'wp-status-badge'; the second registration is a silent no-op, so
+	 * whichever plugin loaded first decides which version of the CSS the
+	 * other one gets. Identical today, and a very confusing afternoon the
+	 * first time the two copies differ.
+	 *
+	 * @return string
+	 */
+	public static function handle(): string {
+		$root = explode( '\\', __NAMESPACE__ )[0] ?? '';
+
+		if ( '' === $root || 'ArrayPress' === $root ) {
+			return 'wp-status-badge';
+		}
+
+		return strtolower( (string) preg_replace( '/[^A-Za-z0-9]+/', '-', $root ) ) . '-wp-status-badge';
 	}
 
 	/**
@@ -336,11 +367,10 @@ class StatusBadge {
 		self::$registered = true;
 
 		wp_register_composer_style(
-			'wp-status-badge',
+			self::handle(),
 			__FILE__,
 			'css/status-badge.css',
 			[ 'dashicons' ]
 		);
 	}
-
 }
