@@ -44,8 +44,8 @@ if ( ! function_exists( 'esc_html' ) ) {
  *
  * These have to be the WordPress functions rather than wp-composer-assets'
  * own: PHPUnit loads the autoloader before it loads this file, so the real
- * wp_register_composer_style() is already defined by the time anything here
- * runs and cannot be shadowed. Stubbing underneath it is the better test
+ * arraypress_register_composer_style() is already defined by the time
+ * anything here runs and cannot be shadowed. Stubbing underneath it is the better test
  * anyway — the path from "register a style" to "a handle and a URL" is the
  * part that would actually break.
  */

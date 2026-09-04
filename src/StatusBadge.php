@@ -356,6 +356,9 @@ class StatusBadge {
 	 * Register the stylesheet via wp-composer-assets
 	 *
 	 * Called once per request regardless of how many instances are created.
+	 * The arraypress_ name rather than the wp_ alias, which wp-composer-assets
+	 * deprecated in 2.1.0: wp_ is core's prefix, and a future core function
+	 * of the same name would silently win the function_exists() guard.
 	 *
 	 * @return void
 	 */
@@ -366,7 +369,7 @@ class StatusBadge {
 
 		self::$registered = true;
 
-		wp_register_composer_style(
+		arraypress_register_composer_style(
 			self::handle(),
 			__FILE__,
 			'css/status-badge.css',

@@ -279,7 +279,7 @@ final class StatusBadgeTest extends TestCase {
 	public function test_the_stylesheet_handle_is_derived_from_the_namespace(): void {
 		$source = (string) file_get_contents( dirname( __DIR__ ) . '/src/StatusBadge.php' );
 
-		preg_match_all( '/wp_(?:enqueue|register_composer)_style\(\s*([^,\n]+)/', $source, $calls );
+		preg_match_all( '/(?:wp_enqueue_style|arraypress_register_composer_style)\(\s*([^,\n]+)/', $source, $calls );
 
 		$this->assertNotEmpty( $calls[1], 'Nothing registers or enqueues the stylesheet any more.' );
 
